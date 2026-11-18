@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FileFlow — Smart File Organizer</title>
+    <style>
+         :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --border: #334155;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --green: #10b981;
+            --red: #ef4444;
+            --blue: #3b82f6;
+            --indigo: #6366f1;
+        }
+        
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 28px;
+        }
+        
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        /* Card Panel */
+        
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .panel-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+        /* Form */
+        
+        .form-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1rem;
+        }
+        
+        .btn-action {
+            background: var(--indigo);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-action:hover {
+            opacity: 0.9;
+        }
+        /* Alerts */
+        
+        .alert {
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .alert.error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--red);
+            color: #fca5a5;
+        }
+        
+        .alert.success {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid var(--green);
+            color: #6ee7b7;
+        }
+        /* Report Banner */
+        
+        .report-box {
+            background: #172554;
+            border: 1px solid var(--blue);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .report-header {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #93c5fd;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+        
+        .badge-item {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .badge-cat {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+        
+        .badge-count {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #60a5fa;
+        }
+        /* Info Grid (Categories explained) */
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+            margin-top: 16px;
+        }
+        
+        .info-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+        }
+        
+        .info-cat {
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .info-exts {
+            font-size: 0.8rem;
+            color: var(--muted);
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>📂 FileFlow Organizer</h1>
+            <span style="color: var(--muted); font-size: 0.9rem;">Python OS Automation Utility</span>
+        </header>
+
+        <!-- Alerts -->
+        {% if alert_msg %}
+        <div class="alert {{ alert_msg[0] }}">{{ alert_msg[1] }}</div>
+        {% endif %}
+
+        <!-- Success Report Banner -->
+        {% if last_report %}
+        <div class="report-box">
+            <div class="report-header">
+                <span>📊 Sorting Report for: <span style="color: #fff; font-family: monospace;">{{ last_report.path }}</span></span>
+                <span style="color: #34d399;">Total Sorted: {{ last_report.total }} files</span>
+            </div>
+            <div class="badge-grid">
+                {% for cat, count in last_report.breakdown.items() %}
+                <div class="badge-item">
+                    <span class="badge-cat">{{ cat }}</span>
+                    <span class="badge-count">{{ count }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Target Folder Input Panel -->
+        <div class="panel">
+            <div class="panel-title">Select Folder to Clean & Organize</div>
+            <form class="form-group" action="/organize" method="POST">
+                <input type="text" name="folder_path" value="{{ target_path }}" placeholder="Enter absolute folder path (e.g. C:/Users/Name/Downloads)" required />
+                <button type="submit" class="btn-action">⚡ Run Organizer</button>
+            </form>
+        </div>
+
+        <!-- Rule Breakdown Preview -->
+        <div class="panel">
+            <div class="panel-title">Active Sorting Rules</div>
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-cat">📄 Documents</div>
+                    <div class="info-exts">.pdf, .docx, .txt, .xlsx, .csv</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-cat">🖼️ Images</div>
+                    <div class="info-exts">.jpg, .png, .gif, .webp, .svg</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-cat">💻 Code</div>
+                    <div class="info-exts">.py, .js, .html, .css, .json</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-cat">📦 Installers</div>
+                    <div class="info-exts">.exe, .msi, .dmg, .pkg, .zip</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

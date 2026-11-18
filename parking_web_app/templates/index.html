@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Moto & Car Parking System</title>
+    <style>
+         :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --border: #334155;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --green: #10b981;
+            --red: #ef4444;
+            --blue: #3b82f6;
+            --amber: #f59e0b;
+        }
+        
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 24px;
+        }
+        
+        .container {
+            max-width: 1120px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 1.55rem;
+        }
+        /* Stats Row */
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+        }
+        
+        .stat-label {
+            color: var(--muted);
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+        /* Action Panels (Check-in & Ticket Verify) */
+        
+        .actions-row {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 820px) {
+            .actions-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+        }
+        
+        .panel-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        
+        .form-inline {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        select,
+        input,
+        button {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+        
+        select,
+        input {
+            background: var(--bg);
+            color: var(--text);
+            flex: 1;
+            min-width: 140px;
+        }
+        
+        .btn-primary {
+            background: var(--blue);
+            color: white;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .btn-verify {
+            background: var(--amber);
+            color: #0f172a;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        
+        .btn-print {
+            background: #f8fafc;
+            color: #0f172a;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 10px 18px;
+        }
+        /* Alerts & Receipt */
+        
+        .alert {
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .alert.error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--red);
+            color: #fca5a5;
+        }
+        
+        .receipt {
+            background: #172554;
+            border: 1px solid var(--blue);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        /* Printable Entry Ticket Card */
+        
+        .ticket-box {
+            background: #fefce8;
+            color: #0f172a;
+            border: 2px dashed #0f172a;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .ticket-id {
+            font-family: monospace;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+        
+        .ticket-meta {
+            font-size: 0.95rem;
+            margin-top: 4px;
+            color: #334155;
+        }
+        /* Parking Grid */
+        
+        h2 {
+            font-size: 1.1rem;
+            color: var(--muted);
+            margin: 22px 0 12px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+            gap: 14px;
+        }
+        
+        .slot {
+            background: var(--card);
+            border-radius: 10px;
+            padding: 14px;
+            border: 2px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 140px;
+        }
+        
+        .slot.free {
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+        
+        .slot.occupied {
+            border-color: rgba(239, 68, 68, 0.6);
+            background: rgba(239, 68, 68, 0.06);
+        }
+        
+        .slot-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+        }
+        
+        .badge {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 99px;
+        }
+        
+        .free .badge {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--green);
+        }
+        
+        .occupied .badge {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+        
+        .tkt-tag {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--amber);
+            font-weight: 700;
+            margin-top: 6px;
+        }
+        
+        .plate {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 2px 0;
+        }
+        
+        .time {
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+        
+        .btn-exit {
+            width: 100%;
+            padding: 7px;
+            background: var(--red);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        /* Print only the entry ticket when Print Ticket is clicked */
+        
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-ticket,
+            #printable-ticket * {
+                visibility: visible;
+            }
+            #printable-ticket {
+                position: fixed;
+                left: 20px;
+                top: 20px;
+                width: 320px;
+                border: 2px dashed #000;
+                background: #fff;
+                color: #000;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🅿️ Moto & Car Parking System</h1>
+            <span style="color: var(--muted); font-size: 0.9rem;">Rates: Moto $0.50/hr • Car $2.00/hr</span>
+        </header>
+
+        <!-- Live Metrics -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">🏍️ Moto Bays Available</div>
+                <div class="stat-value" style="color: var(--green);">{{ moto_free }} / 12</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">🚗 Car Bays Available</div>
+                <div class="stat-value" style="color: var(--green);">{{ car_free }} / 8</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">💵 Total Revenue</div>
+                <div class="stat-value" style="color: var(--blue);">${{ "%.2f"|format(total_revenue) }}</div>
+            </div>
+        </div>
+
+        <!-- Error Alert -->
+        {% if alert_msg %}
+        <div class="alert {{ alert_msg[0] }}">{{ alert_msg[1] }}</div>
+        {% endif %}
+
+        <!-- Newly Issued Parking Ticket (Driver keeps this to check at exit) -->
+        {% if entry_ticket %}
+        <div class="ticket-box" id="printable-ticket">
+            <div>
+                <div style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase;">🎟️ Official Parking Ticket</div>
+                <div class="ticket-id">{{ entry_ticket.ticket_id }} • BAY {{ entry_ticket.slot }}</div>
+                <div class="ticket-meta">
+                    <strong>Vehicle:</strong> {{ entry_ticket.type.upper() }} |
+                    <strong>Plate:</strong> {{ entry_ticket.plate }} |
+                    <strong>Time In:</strong> {{ entry_ticket.entry_str }}
+                </div>
+                <div style="font-size: 0.78rem; color: #475569; margin-top: 4px;">
+                    Present this ticket upon exit for fee calculation.
+                </div>
+            </div>
+            <button type="button" class="btn-print no-print" onclick="window.print()">🖨️ Print Ticket</button>
+        </div>
+        {% endif %}
+
+        <!-- Checkout Payment Receipt -->
+        {% if last_receipt %}
+        <div class="receipt">
+            <div>
+                <strong>🧾 PAID RECEIPT — {{ last_receipt.ticket_id }} • {{ last_receipt.plate }} ({{ last_receipt.type }} • Bay {{ last_receipt.slot }})</strong><br/>
+                <span style="color: #93c5fd; font-size: 0.9rem;">
+            In: {{ last_receipt.entry }} | Out: {{ last_receipt.exit }} | Duration: {{ last_receipt.hours }} hr(s)
+          </span>
+            </div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: #34d399;">
+                Paid: ${{ last_receipt.fee }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Check-In & Ticket Verification Row -->
+        <div class="actions-row">
+            <div class="panel">
+                <div class="panel-title">1. Issue Entry Ticket (Check-In)</div>
+                <form class="form-inline" action="/park" method="POST">
+                    <select name="v_type">
+            <option value="moto">🏍️ Motorbike ($0.50/hr)</option>
+            <option value="car">🚗 Car ($2.00/hr)</option>
+          </select>
+                    <input type="text" name="plate" placeholder="Plate (e.g. 1AB-9999)" required />
+                    <button type="submit" class="btn-primary">+ Issue Ticket</button>
+                </form>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">2. Verify Ticket / Exit Check-Out</div>
+                <form class="form-inline" action="/verify_exit" method="POST">
+                    <input type="text" name="query" placeholder="Ticket ID (TKT-1001) or Plate" required />
+                    <button type="submit" class="btn-verify">Verify & Pay</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Motorbike Grid -->
+        <h2>🏍️ Motorbike Zone (M-01 to M-12)</h2>
+        <div class="grid">
+            {% for slot_id, info in slots.items() if slot_id.startswith('M-') %}
+            <div class="slot {{ 'occupied' if info else 'free' }}">
+                <div class="slot-header">
+                    <span>{{ slot_id }}</span>
+                    <span class="badge">{{ 'OCCUPIED' if info else 'OPEN' }}</span>
+                </div>
+                {% if info %}
+                <div>
+                    <div class="tkt-tag">🎟️ {{ info.ticket_id }}</div>
+                    <div class="plate">{{ info.plate }}</div>
+                    <div class="time">In: {{ info.short_time }}</div>
+                    <form action="/exit/{{ slot_id }}" method="POST">
+                        <button type="submit" class="btn-exit">Check Out & Pay</button>
+                    </form>
+                </div>
+                {% else %}
+                <div style="color: var(--muted); font-size: 0.85rem;">Ready for moto</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Car Grid -->
+        <h2>🚗 Car Zone (C-01 to C-08)</h2>
+        <div class="grid">
+            {% for slot_id, info in slots.items() if slot_id.startswith('C-') %}
+            <div class="slot {{ 'occupied' if info else 'free' }}">
+                <div class="slot-header">
+                    <span>{{ slot_id }}</span>
+                    <span class="badge">{{ 'OCCUPIED' if info else 'OPEN' }}</span>
+                </div>
+                {% if info %}
+                <div>
+                    <div class="tkt-tag">🎟️ {{ info.ticket_id }}</div>
+                    <div class="plate">{{ info.plate }}</div>
+                    <div class="time">In: {{ info.short_time }}</div>
+                    <form action="/exit/{{ slot_id }}" method="POST">
+                        <button type="submit" class="btn-exit">Check Out & Pay</button>
+                    </form>
+                </div>
+                {% else %}
+                <div style="color: var(--muted); font-size: 0.85rem;">Ready for car</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+</html>
